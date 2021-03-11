@@ -1,0 +1,71 @@
+@import "~src/app/core/styles/variables";
+
+
+.login-widow-container{
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.login-widow {
+  position: relative;
+  display: block;
+  background: $nav-bg;
+  border-radius: calc(4 * #{$ss});
+  padding-top: 0;
+  box-sizing: content-box;
+}
+
+.window-header, .window-footer{
+  width: 100%;
+  padding: 0 7.5 * $ss;
+}
+
+.window-header{
+  border-radius: calc(4 * #{$ss}) calc(4 * #{$ss}) 0 0;
+  text-transform: uppercase;
+  .window-header-name{
+    font-size: $fs-title * 1.5;
+    line-height: 1.5;
+  }
+}
+.window-footer{
+  display: flex;
+  justify-content: flex-end;
+  border-radius: 0 0 calc(4 * #{$ss}) calc(4 * #{$ss});
+  padding-bottom: 7.5 * $ss;
+}
+
+.window-content{
+  padding: 7.5 * $ss;
+  padding-bottom: 0;
+}
+.controlWr{
+  margin-bottom: 8px;
+
+  .btn:not(.btn-from) {
+    margin-bottom: 0;
+    color: $white;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  .control-label {
+    line-height: 1.8125rem;
+    background-color: $btn-navy;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  .input-control{
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    text-align: left;
+    width: 230px;
+    font-weight: normal;
+    user-select: auto;
+    text-transform: none;
+    background: $input-bg !important;
+  }
+}

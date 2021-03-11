@@ -1,0 +1,31 @@
+namespace com.epam.deltix.grafana.test;
+
+import EPAM.Deltix.Timebase.Messages.*;
+import EPAM.Deltix.Timebase.Api.Messages.*;
+
+[GenerateReadOnlyInterface]
+[GenerateReadWriteInterface]
+class GrafanaTestMessage : InstrumentMessage {
+
+    [SchemaElement()]
+	[SchemaType(DataType = SchemaDataType.FLOAT, Encoding = "DECIMAL64", IsNullable = true)]
+    Decimal HighPrice;
+
+    [SchemaElement()]
+	[SchemaType(DataType = SchemaDataType.FLOAT, Encoding = "DECIMAL64", IsNullable = true)]
+    Decimal LowPrice;
+
+    [SchemaElement()]
+	[SchemaType(DataType = SchemaDataType.FLOAT, Encoding = "DECIMAL64", IsNullable = true)]
+    Decimal Price;
+
+    [SchemaElement()]
+    Text Vendor;
+
+    [SchemaElement()]
+    [SchemaType(DataType = SchemaDataType.VARCHAR, Encoding = "ALPHANUMERIC(10)")]
+    Int64 Currency;
+
+    [SchemaElement()]
+    GrafanaTestEnum PriceType;
+}

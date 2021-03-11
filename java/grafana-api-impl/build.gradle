@@ -1,0 +1,9 @@
+dependencies {
+    api project(":java:grafana-api")
+
+    implementation 'com.google.guava:guava'
+
+    implementation 'deltix:deltix-containers'
+
+    testImplementation "junit:junit"
+}

@@ -1,0 +1,14 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{'titles.describe' | translate}} {{stream.name}}</h4>
+  <button (click)="bsModalRef.hide()" aria-label="Close" tooltip="{{'buttons.close' | translate}}" class="close pull-right" type="button">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <ng-template [ngIf]="(describe | async)">
+      <pre [innerHTML]="(describe | async).ddl"></pre>
+  </ng-template>
+</div>
+<div class="modal-footer">
+  <button (click)="onCopy()" class="btn btn-info" type="button">{{'buttons.copy_&_close' | translate}}</button>
+</div>

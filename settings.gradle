@@ -1,0 +1,6 @@
+include 'java:ws-messages', 'java:ws-server',
+        'java:computations-api',
+        'java:grafana-api', 'java:grafana-api-impl', 'java:grafana-basicmath',
+        'web:frontend', 'web:timebase-datasource-plugin'
+
+rootProject.name = "deltix-timebase-web-gateway"

@@ -1,0 +1,61 @@
+<div class="d-flex flex-column align-items-center">
+  <div class="time-bar-wr w-100">
+
+    <div class="time-bar w-100" #timeBar>
+      <div (click)="onSetDate($event)" (mousemove)="onMouseMove($event)" class="time-bar-event-area"></div>
+
+      <ng-template [ngIf]="method == 'purge'">
+      <span  (mousemove)="$event.stopPropagation();" [ngStyle]="{
+        width: 'calc(' + cursorLeft +  'px' + ' + 15px)'
+      }" class="time-bar-width"></span>
+      </ng-template>
+
+      <ng-template [ngIf]="method == 'truncate'">
+        <span  (mousemove)="$event.stopPropagation();" [ngStyle]="{
+          width: 'calc(' + timeBarWidth + 'px - '  + cursorLeft +  'px)' 
+        }" [style.left]="'auto'" [style.right]="0" class="time-bar-width"></span>
+        </ng-template>
+  
+
+      <span #timeBarCursor (mousemove)="$event.stopPropagation();" [ngStyle]="{
+      transform: 'translateX(' + cursorLeft + 'px)'
+    }" class="time-bar-cursor"></span>
+
+      <span #timeBarSelectorCursor (mousemove)="$event.stopPropagation();" [ngStyle]="{
+      transform: 'translateX(' + selectorCursorLeft + 'px)'
+    }" class="time-bar-selector-cursor">
+        <span class="time-bar-selector-cursor-text">{{selectorCursorTitle}}</span>
+      </span>
+
+    </div>
+    <div class="time-bar-legend d-flex w-100 justify-content-between">
+      <span class="time-bar-start">{{startDate_title}}</span>
+      <span class="time-bar-end">{{endDate_title}}</span>
+    </div>
+  </div>
+
+  <div class="time-inputs">
+      
+    <div class="w-100">
+      <span class="font-weight-bold w-100">Date:</span>
+    </div>
+
+    <div class="controlWr datepicker-inputWr">
+      <input class="btn bs-datepicker datepicker-input"
+        [bsConfig]="bsConfig" id="rangeFromInput" type="text" #dp="bsDatepicker"
+        bsDatepicker (bsValueChange)="onValueChange($event)" triggers="dblclick:click" [(bsValue)]="visibleSelectedDate" />
+      <button class="btn btn-navy btn-from" (click)="dp.toggle()" [attr.aria-expanded]="dp.isOpen" type="button"></button>
+    </div>
+    <div class="w-100">
+      <span class="font-weight-bold w-100">Timezone:</span>
+    </div>
+    <div class="controlWr datepicker-inputWr timezone-inputWr d-flex align-content-stretch">
+      <ng-multiselect-dropdown (onSelect)="onTimeZoneSelected()" (onDeSelect)="onTimeZoneDeSelected()"
+        [(ngModel)]="selectedTimeZone" [data]="dropdownListTimeZones" [placeholder]="'Timezone'"
+        [settings]="dropdownSettingsTimeZone">
+      </ng-multiselect-dropdown>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,120 @@
+@import "../../../../core/styles/variables";
+
+.streams-tabs {
+  height: 30 * $ss;
+}
+
+.tabs {
+  flex-wrap: nowrap;
+  padding-top: 6 * $ss;
+  padding-bottom: 6 * $ss;
+}
+
+.nav-item {
+  .nav-link {
+    background: $nav-bg;
+    border-radius: $border-radius;
+    margin: 1 * $ss;
+    padding: 2 * $ss 10 * $ss 0.5 * $ss 4 * $ss;
+
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    color: $table-th;
+    font-size: $fs-title;
+    &.active {
+      border-bottom: 2px solid $white;
+      color: $white;
+    }
+    svg {
+      position: relative;
+      top: -1px;
+    }
+  }
+}
+
+.icon-list {
+  position: absolute;
+  right: 10 * $ss;
+  top: 0;
+  height: 30 * $ss;
+  padding-top: 6 * $ss;
+  padding-bottom: 6 * $ss;
+
+  .nav-item {
+    .nav-link {
+      white-space: nowrap;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      padding-top: 2 * $ss;
+      height: 15 * $ss;
+      width: 13 * $ss;
+      box-sizing: border-box;
+
+      &:hover {
+        color: #0056b3;
+      }
+    }
+  }
+}
+
+.perf-scroll {
+  max-width: calc(100% - 46 * #{$ss});
+  max-height: 30 * $ss;
+}
+
+.perf-scroll-wrap {
+  max-width: calc(100% - 0.5 * #{$ss});
+  max-height: 30 * $ss;
+  overflow: auto;
+}
+
+.contain-tabs {
+  width: calc(100% - 50 * #{$ss});
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: $blue;
+  color: $white;
+}
+
+button.close {
+  top: 5*$ss;
+}
+
+.dropdown-menu {
+  left: auto;
+  right: 0;
+  color: $white;
+
+  li {
+    position: relative;
+  }
+
+  .close {
+    top: 3.5 * $ss;
+  }
+}
+
+.dropdown-item {
+  color: inherit;
+  font-size: $fs-reg;
+}
+
+.show.dropdown .openList,
+.icon-list.nav .nav-item .show.btn-link {
+  color: $nav-bg;
+  background: $blue;
+}
+
+.scroll-dropdown{
+  max-width: 100vw;
+  max-height: calc(100vh - 65 * 0.125rem);
+}

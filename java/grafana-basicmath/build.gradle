@@ -1,0 +1,11 @@
+dependencies {
+    api project(":java:grafana-api"),
+        project(":java:grafana-api-impl")
+
+    implementation 'deltix:deltix-containers',
+            'deltix:deltix-quoteflow'
+
+    implementation 'rtmath:rtmath-finanalysis:2.1.12'
+
+    testImplementation "junit:junit"
+}

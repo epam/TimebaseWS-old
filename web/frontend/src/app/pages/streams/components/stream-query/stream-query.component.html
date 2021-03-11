@@ -1,0 +1,22 @@
+<div class="d-flex query-div flex-shrink-1">
+  <form [formGroup]="queryForm" class="queryForm d-flex" id="queryForm" (submit)="sendQuery()">
+    <div class="form-group d-flex">
+      <button (click)="sendQuery()" class="btn btn-info controlWr" tooltip="{{'buttons.send_query' | translate}}"
+        placement="right" type="button">SEND</button>
+
+      <label for="rows" class="label-query d-flex">Max rows:</label>
+      <input class="form-control inputRows d-flex" type="number" id="rows" name="rows" formControlName="rows">
+
+    </div>
+    <div class="break"></div>
+    <div class="form-group">
+      <textarea class="form-control queryTextarea" (change)="changeQQLText()" (keydown)="sendQueryCtrlEnter($event)"
+        formControlName="queryTextarea" id="queryTextarea"></textarea>
+    </div>
+  </form>
+</div>
+
+<div class="d-flex wrap-grid flex-shrink-1">
+  <ag-grid-angular #streamDetailsGridQuery [gridOptions]="gridOptions" class="grid ag-theme-balham-dark">
+  </ag-grid-angular>
+</div>

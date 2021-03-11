@@ -1,0 +1,104 @@
+import org.gradle.internal.os.OperatingSystem
+
+//apply plugin: 'com.moowork.grunt'
+//apply plugin: 'com.moowork.node'
+apply plugin: 'com.github.node-gradle.node'
+
+node {
+    version = '12.18.2'
+    yarnVersion = '1.16.0'
+    download = true
+}
+
+def resourceOutputDir = file("$buildDir/generated-resources")
+def outputDir = file("$resourceOutputDir/static")
+def srcDir = file("$projectDir/src")
+
+// Note: Actual task output dir is defined in angular-cli.json
+
+task yarn_run_build(type: com.github.gradle.node.yarn.task.YarnTask) {
+  dependsOn yarn
+  yarnCommand = [ "run", "build"]
+  inputs.dir srcDir
+  inputs.files fileTree('./') { include '*.json', '*.js' }
+
+  outputs.dir outputDir
+}
+
+//yarn_run_build {
+//  inputs.dir srcDir
+//  inputs.files fileTree('./') { include '*.json', '*.js' }
+//
+//  outputs.dir outputDir
+//}
+
+sourceSets {
+  main {
+    output.dir resourceOutputDir, builtBy: yarn_run_build
+  }
+}
+
+import groovy.json.JsonSlurper
+import groovy.json.JsonBuilder
+
+task updatePluginVersion() {
+  doLast{
+    def inputFile = new File("$project.projectDir/package.json")
+    def json = new JsonSlurper().parseText(inputFile.text)
+    json.put("version", version)
+    def jsonBuilder = new JsonBuilder(json)
+    inputFile.write(jsonBuilder.toPrettyString())
+  }
+}
+
+task distribution(type: Zip, dependsOn: build) {
+
+    doFirst {
+        println(buildDir)
+        println("${buildDir}/../dist")
+    }
+
+    archiveVersion.set("")
+    archiveClassifier.set("distribution")
+
+    destinationDirectory.set(file("${rootDir}/distribution"))
+
+    from ("${buildDir}/../..") {
+        include "timebase-datasource-plugin/dist/**"
+    }
+
+    doLast {
+        println "Created distribution package [$archiveFileName] in [$destinationDirectory]"
+    }
+}
+
+task pushDistribution(type: Exec, dependsOn: distribution) {
+
+    // without this closure path variable is incorrect!
+    doFirst {
+        def path = distribution.getArchiveFile().get().getAsFile().getAbsolutePath().toString()
+        println "pushing package ${path} under account ${System.getenv('ARTIFACTORY_USER')}"
+
+        commandLine "curl", "--silent", "--show-error", "--fail",
+                "https://artifactory.epam.com/artifactory/EPM-RTC/QuantServer/TBWG/grafana/${version}/${distribution.archiveFileName.get()}",
+                "--user", "${System.getenv('ARTIFACTORY_USER')}:${System.getenv('ARTIFACTORY_PASS')}",
+                "--upload-file", "${path}"
+
+        //commandLine "cmd a ${apath}"
+    }
+}
+
+def grafanaHome = findProperty("GRAFANA_HOME") ?: System.getenv("GRAFANA_HOME")
+def grafanaPlugins = "$grafanaHome/data/plugins"
+def timebasePlugin = "$grafanaPlugins/timebase-datasource-plugin"
+
+task cleanTimebaseGrafanaPlugin(type: Delete) {
+    delete timebasePlugin
+}
+
+task deployLocally(type: Copy, dependsOn: [build, cleanTimebaseGrafanaPlugin]) {
+    from ("${buildDir}/../..") {
+        include "timebase-datasource-plugin/dist/**"
+    }
+    into grafanaPlugins
+}

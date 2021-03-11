@@ -1,0 +1,47 @@
+configurations {
+    dojoGenerator
+    luminary.extendsFrom testImplementation
+}
+
+dependencies {
+    dojoGenerator 'deltix:dojo-generator'
+
+    api 'com.fasterxml.jackson.core:jackson-annotations',
+            'com.google.code.findbugs:jsr305'
+
+    api 'deltix.qsrv.timebase:deltix-timebase-api'
+    api 'deltix.qsrv.timebase:deltix-timebase-pub'
+
+    api 'deltix.qsrv:deltix-commons-collections'
+    api 'deltix.qsrv:deltix-commons-messages'
+
+    implementation 'deltix:deltix-dfp'
+    implementation 'deltix:deltix-anvil-lang'
+    implementation 'deltix:deltix-containers'
+    implementation 'deltix:rtmath-containers'
+
+    implementation 'org.reflections:reflections'
+    implementation 'com.google.guava:guava'
+
+    testImplementation "junit:junit"
+
+    luminary "deltix.qsrv:deltix-commons-messages:${commonsVersion}:luminary@jar"
+    luminary "deltix.qsrv:deltix-timebase-api-messages:${timebaseApiMessagesVersion}:luminary@jar"
+}
+
+def luminarySearchPath = configurations.luminary.files.join(File.pathSeparator)
+
+def generatedTestDirectory = file('build/generated-src/test/messages')
+def luxProjectFile = new File("src/test/luminary/", 'test-messages.json')
+def luxConfigFile = new File("src/test/luminary/", 'java-generator.json')
+
+sourceSets.test.java.srcDirs generatedTestDirectory
+
+task generate(type: JavaExec) {
+    main = "deltix.dojo.generator.Generator"
+    classpath = configurations.dojoGenerator
+    args = ["$luxProjectFile", "$luxConfigFile", "$generatedTestDirectory"]
+    environment LUMINARY_SEARCH_PATH: luminarySearchPath
+}
+
+compileTestJava.dependsOn generate

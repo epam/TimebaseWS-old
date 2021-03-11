@@ -1,0 +1,61 @@
+{
+  "type": "datasource",
+  "name": "timebase-datasource-plugin",
+  "id": "deltix-timebase-datasource-plugin",
+  "metrics": true,
+  "annotations": false,
+  "info": {
+    "description": "TimeBase datasource",
+    "author": {
+      "name": "EPAM RTC Lab"
+    },
+    "keywords": [],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+
+  "routes": [
+    {
+      "path": "",
+      "method": "GET",
+      "url": "{{.JsonData.timebaseUrl}}",
+      "tokenAuth": {
+        "url": "{{.JsonData.timebaseUrl}}/oauth/token",
+        "params": {
+          "grant_type": "password",
+          "client_id": "web",
+          "client_secret": "secret",
+          "username": "{{.JsonData.timebaseUser}}",
+          "password": "{{.SecureJsonData.timebasePassword}}",
+          "scope": "trust"
+        }
+      }
+    },
+    {
+      "path": "",
+      "method": "POST",
+      "url": "{{.JsonData.timebaseUrl}}",
+      "tokenAuth": {
+        "url": "{{.JsonData.timebaseUrl}}/oauth/token",
+        "params": {
+          "grant_type": "password",
+          "client_id": "web",
+          "client_secret": "secret",
+          "username": "{{.JsonData.timebaseUser}}",
+          "password": "{{.SecureJsonData.timebasePassword}}",
+          "scope": "trust"
+        }
+      }
+    }
+  ],
+  "dependencies": {
+    "grafanaVersion": "7.x.x",
+    "plugins": []
+  }
+}

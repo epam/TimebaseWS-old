@@ -1,0 +1,13 @@
+dependencies {
+    api 'com.fasterxml.jackson.core:jackson-annotations',
+            'com.google.code.findbugs:jsr305'
+
+    api project(":java:computations-api")
+
+    implementation 'org.reflections:reflections'
+
+    api 'deltix:deltix-anvil-lang',
+            'deltix:deltix-dfp'
+
+    testImplementation "junit:junit"
+}

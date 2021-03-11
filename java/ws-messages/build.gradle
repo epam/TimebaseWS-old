@@ -1,0 +1,34 @@
+configurations {
+    dojoGenerator
+    luminary.extendsFrom implementation
+}
+
+dependencies {
+    api 'deltix.qsrv:deltix-timebase-api-messages'
+    api 'deltix.qsrv:deltix-commons-messages'
+    api 'deltix.qsrv.timebase:deltix-timebase-client'
+    api 'deltix:rtmath-containers'
+    api 'deltix:deltix-dfp'
+
+    luminary "deltix.qsrv:deltix-commons-messages:${commonsVersion}:luminary@jar"
+    luminary "deltix.qsrv:deltix-timebase-api-messages:${timebaseApiMessagesVersion}:luminary@jar"
+
+    dojoGenerator 'deltix:dojo-generator'
+}
+
+def luminarySearchPath = configurations.luminary.files.join(File.pathSeparator)
+
+def generatedMainDirectory = file('build/generated-src/main/messages')
+def luxProjectFile = new File("src/main/luminary/", 'web-gateway-messages.json')
+def luxConfigFile = new File("src/main/luminary/", 'java-generator.json')
+
+sourceSets.main.java.srcDirs generatedMainDirectory
+
+task generate(type: JavaExec) {
+    main = "deltix.dojo.generator.Generator"
+    classpath = configurations.dojoGenerator
+    args = ["$luxProjectFile", "$luxConfigFile", "$generatedMainDirectory"]
+    environment LUMINARY_SEARCH_PATH: luminarySearchPath
+}
+
+compileJava.dependsOn generate

@@ -1,0 +1,41 @@
+namespace com.epam.deltix.computations.data;
+
+import EPAM.Deltix.Timebase.Messages.*;
+import EPAM.Deltix.Timebase.Api.Messages.*;
+
+[GenerateReadOnlyInterface][GenerateReadWriteInterface]
+class AllTypesMessage: AllSimpleTypesMessage {
+
+    [SchemaElement()]
+    [SchemaType(DataType = SchemaDataType.OBJECT, NestedTypes = { typeof(AllSimpleTypesMessage) })]
+    AllSimpleTypesMessage Object;
+
+    [SchemaElement()]
+    List<Boolean> BooleanList;
+
+    [SchemaElement()]
+    List<Int8> ByteList;
+
+//    [SchemaElement()]
+//    List<Decimal> decimalList;
+
+    [SchemaElement()]
+    List<Float64> DoubleList;
+
+    [SchemaElement()]
+    List<Float32> FloatList;
+
+    [SchemaElement()]
+    List<Int32> IntList;
+
+    [SchemaElement()]
+    List<Int64> LongList;
+
+    [SchemaElement()]
+    List<Int16> ShortList;
+
+    [SchemaElement()]
+    [SchemaArrayType(ElementTypes = { typeof(AllSimpleTypesMessage) })]
+    List<AllSimpleTypesMessage> ObjectsList;
+
+}

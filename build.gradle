@@ -1,0 +1,280 @@
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "gradle.plugin.com.webcohesion.enunciate:enunciate-gradle:2.12.0"
+        classpath 'org.owasp:dependency-check-gradle:5.3.2.1'
+        classpath "com.github.node-gradle:gradle-node-plugin:3.0.0-rc5"
+        classpath "deltix.qsrv:deltix-commons-util:${commonsVersion}"
+    }
+}
+
+plugins {
+    id 'base'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'org.springframework.boot' version '2.2.6.RELEASE' apply false
+    //id "com.moowork.node" version "1.3.1" apply false
+    //id "com.moowork.grunt" version "1.3.0" apply false
+    id 'deltix.gradle.plugin.gitlab-release' version '1.0.8'
+    id "com.github.node-gradle.node" version "3.0.0-rc5"
+}
+
+apply from: "$rootDir/gradle/Release.gradle"
+apply from: "$rootDir/gradle/tools.gradle"
+
+ext {
+    dockerImages = [
+            main   : 'src/main/docker/Dockerfile',
+            openjdk : 'src/main/docker/openjdk/Dockerfile',
+    ]
+}
+
+def javaProjects = subprojects.findAll { project -> project.subprojects.empty }
+
+configure(allprojects) {
+
+    apply plugin: 'base'
+
+    apply from: "$rootDir/gradle/Deltix.gradle"
+
+    ext {
+        vendor = 'Deltix Inc.'
+    }
+}
+
+configure(javaProjects) {
+
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+    apply plugin: 'io.spring.dependency-management'
+
+    apply from: "$rootDir/gradle/DockerSupport.gradle"
+
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: 'org.owasp.dependencycheck'
+
+    if (disableJavadoc.toBoolean()) {
+        println "Disabling JavaDoc for " + project.getName()
+        tasks.withType(Javadoc).all { enabled = false }
+    }
+
+    dependencyCheck {
+        if (project.hasProperty("failOnHighCVSS") && project.getProperty("failOnHighCVSS") == 'true') {
+            failBuildOnCVSS = 7
+        }
+        suppressionFile = file("$rootDir/dependency-check-suppression-file.xml")
+        analyzers {
+            assemblyEnabled = false
+        }
+    }
+
+    compileJava.options.encoding = 'UTF-8'
+
+    sourceCompatibility = 11
+    targetCompatibility = 11
+
+    configurations.all {
+        resolutionStrategy {
+            // Disable this line on case of version conflict and then run :dependency task OR execute build with --scan option
+            failOnVersionConflict()
+        }
+    }
+
+    // Defines versions of dependencies to be used by subprojects
+    // https://github.com/spring-gradle-plugins/dependency-management-plugin#dependency-management-dsl
+    dependencyManagement {
+
+        imports {
+//            mavenBom 'deltix:deltix-ember-bom:' + emberVersion // contains old timebase version
+            mavenBom 'io.netty:netty-bom:4.1.48.Final' // contains old timebase version
+        }
+
+        dependencies {
+            dependency "deltix.qsrv:deltix-timebase-api-messages:${timebaseApiMessagesVersion}"
+
+            dependency 'deltix:deltix-anvil-lang:1.6.76'
+
+            // Enunciate annotations
+            dependency 'com.webcohesion.enunciate:enunciate-core-annotations:2.12.0'
+
+            dependencySet(group: 'deltix', version: '2.0.40') {
+                entry 'deltix-gflog-api'
+                entry 'deltix-gflog-core'
+                entry 'deltix-gflog-jul'
+                entry 'deltix-gflog-dcl'
+                entry 'deltix-gflog-slf4j'
+            }
+
+            dependencySet(group: 'deltix.qsrv', version: "${commonsVersion}") {
+                entry 'deltix-commons-collections'
+                entry 'deltix-commons-gui'
+                entry 'deltix-commons-lang'
+                entry 'deltix-commons-log'
+                entry 'deltix-commons-util'
+                entry 'deltix-commons-messages'
+            }
+
+            dependencySet (group: 'deltix.qsrv.timebase', version: '6.0.16') {
+                entry 'deltix-timebase-client'
+                entry 'deltix-timebase-aerondirect'
+                entry 'deltix-timebase-api'
+                entry 'deltix-timebase-pub'
+                entry 'deltix-timebase-server'
+            }
+
+            dependencySet (group: 'deltix.qsrv.quantserver', version: '6.0.16') {
+                entry 'deltix-quantserver-pub'
+                entry 'deltix-quantserver-snmpagent'
+            }
+
+            dependency 'deltix:deltix-dfp:0.10.12'
+
+            dependency 'deltix:hd-date-time:0.2.4'
+            // rtmath containers
+            dependency 'deltix:deltix-containers:3.1.3'
+            dependency 'deltix:rtmath-containers:2.3.17'
+            dependency 'deltix:rtmath-containers-decimal:2.3.17'
+
+            dependency 'deltix:deltix-quoteflow:3.6.12'
+            dependency 'deltix:dojo-generator:3.0.5'
+
+            // spring boot tests
+            dependency 'org.springframework.boot:spring-boot-starter-test:2.2.7.RELEASE'
+            dependency 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+            dependency 'com.nimbusds:oauth2-oidc-sdk:6.14'
+
+            // resolving conflicts
+            dependency 'com.squareup.okhttp3:okhttp:3.3.1'
+            dependency 'net.minidev:json-smart:2.3'
+
+            dependency 'commons-io:commons-io:2.5'
+            dependency 'commons-logging:commons-logging:1.2'
+
+            dependencySet (group: 'org.springframework.security.oauth', version: '2.4.0.RELEASE') {
+                entry 'spring-security-oauth2'
+            }
+
+            dependencySet (group: 'com.fasterxml.jackson.core', version: '2.10.3') {
+                entry 'jackson-annotations'
+                entry 'jackson-mapper'
+                entry 'jackson-databind'
+                entry 'jackson-core'
+            }
+
+            dependencySet(group: 'org.springframework', version: '5.2.3.RELEASE') {
+                entry 'spring-beans'
+                entry 'spring-core'
+                entry 'spring-context'
+                entry 'spring-web'
+                entry 'spring-webmvc'
+                entry 'spring-messaging'
+                entry 'spring-aop'
+                entry 'spring-expression'
+            }
+
+            dependencySet(group: 'org.springframework.boot', version: '2.2.7.RELEASE') {
+                entry 'spring-boot-starter-web'
+                entry 'spring-boot-starter-websocket'
+                entry 'spring-boot-starter-test'
+                entry 'spring-boot-configuration-processor'
+            }
+
+            dependencySet(group: 'org.springframework.security', version: '5.2.2.RELEASE') {
+                entry 'spring-security-messaging'
+                entry 'spring-security-web'
+                entry 'spring-security-core'
+                entry 'spring-security-oauth2-client'
+                entry 'spring-security-oauth2-jose'
+                entry 'spring-security-oauth2-resource-server'
+                entry 'spring-security-config'
+            }
+
+            dependencySet(group: 'org.apache.tomcat.embed', version: '9.0.37') {
+                entry 'tomcat-embed-core'
+                entry 'tomcat-embed-websocket'
+                entry 'tomcat-embed-el'
+                // entry 'tomcat-embed-logging-juli'
+                entry 'tomcat-embed-jasper'
+            }
+
+            dependency 'org.springframework.security:spring-security-jwt:1.1.0.RELEASE'
+
+            dependency 'org.asynchttpclient:async-http-client:2.10.4'
+            dependency 'org.asynchttpclient:async-http-client-netty-utils:2.10.4'
+
+            dependency 'com.google.code.findbugs:annotations:3.0.1'
+
+            dependency 'org.apache.commons:commons-lang3:3.7'
+            dependency 'commons-codec:commons-codec:1.10'
+            
+            dependency 'com.google.code.findbugs:jsr305:3.0.2'
+
+            dependency 'org.reflections:reflections:0.9.11' // do not upgrade to 0.9.12 (https://github.com/ronmamo/reflections/issues/279)
+
+            dependency 'junit:junit:4.12'
+
+            dependency 'com.google.guava:guava:20.0'
+            dependency 'com.google.code.gson:gson:2.8.0'
+
+            dependency 'org.slf4j:slf4j-api:1.7.25'
+
+            dependency 'joda-time:joda-time:2.8.1'
+        }
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        archiveClassifier.set('sources')
+        archiveBaseName.set(archivesBaseName)
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        archiveClassifier.set('javadoc')
+        archiveBaseName.set(archivesBaseName)
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    test {
+        ignoreFailures Boolean.getBoolean("test.ignoreFailures")
+        reports.junitXml.enabled = true
+
+        doLast {
+            copy {
+                from reports.junitXml.getDestination() include {"*.xml"}
+                into file("$rootDir/build/reports/tests/xml")
+            }
+        }
+    }
+}
+
+gitlabRelease {
+    msteams {
+        projectName = "TimeBase Web Gateway"
+        color = "#b04727"
+    }
+}
+
+def testTasks = javaProjects*.test
+
+task generateTestReport(type: TestReport) {
+    reportOn testTasks
+    description "Executes tests for all Java projects and generates merged test report"
+    destinationDir = file("$rootDir/build/reports/tests/html/all_reports_merged") // TODO: Pick better name for merged report
+}
+
+build.dependsOn generateTestReport

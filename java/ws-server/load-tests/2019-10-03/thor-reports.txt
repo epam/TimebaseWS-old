@@ -1,0 +1,271 @@
+Websocket load tests reports
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+                     
+Online               408 milliseconds
+Time taken           1248 milliseconds
+Connected            1
+Disconnected         0
+Failed               0
+Total transferred    337B
+Total received       473B
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          306     306           0     306 306    
+Latency              NaN     NaN         NaN     NaN NaN    
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          306     306     306     306     306     306     306     306     306    
+Latency              NaN     NaN     NaN     NaN     NaN     NaN     NaN     NaN     NaN    
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+           
+Online               247 milliseconds
+Time taken           545 milliseconds
+Connected            10
+Disconnected         0
+Failed               0
+Total transferred    3.29kB
+Total received       4.62kB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          43      102          24     109 133    
+Latency              NaN     NaN         NaN     NaN NaN    
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          109     115     116     118     133     133     133     133     133    
+Latency              NaN     NaN     NaN     NaN     NaN     NaN     NaN     NaN     NaN    
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+                    
+Online               291 milliseconds
+Time taken           733 milliseconds
+Connected            20
+Disconnected         0
+Failed               9
+Total transferred    5.99kB
+Total received       19.87kB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          67      100          34      85 177    
+Latency              4       227         196     166 450    
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          85      106     108     144     166     177     177     177     177    
+Latency              166     442     443     446     447     450     450     450     450    
+
+Received errors:
+
+9x                   not opened
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+
+Online               488 milliseconds
+Time taken           1075 milliseconds
+Connected            30
+Disconnected         0
+Failed               32
+Total transferred    9.67kB
+Total received       43.24kB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          22      149          90     160 361    
+Latency              1       15           24       2 85     
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          160     201     238     244     249     254     361     361     361    
+Latency              2       6       13      27      73      76      85      85      85     
+
+Received errors:
+
+32x                  not opened
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+                     
+Online               719 milliseconds
+Time taken           1862 milliseconds
+Connected            40
+Disconnected         0
+Failed               1620
+Total transferred    10.44kB
+Total received       1.26MB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          23      322         210     438 591    
+Latency              0       31          143       1 1287   
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          438     460     498     524     574     583     591     591     591    
+Latency              1       1       1       2       32      109     466     949     1287   
+
+Received errors:
+
+1620x                not opened
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+                     
+Online               594 milliseconds
+Time taken           2070 milliseconds
+Connected            50
+Disconnected         0
+Failed               2056
+Total transferred    12.68kB
+Total received       1.52MB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          21      245         170     277 465    
+Latency              0       30          143       1 1410   
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          277     378     396     423     460     462     465     465     465    
+Latency              1       1       1       2       11      125     471     864     1410   
+
+Received errors:
+
+2056x                not opened
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+                     
+Online               3153 milliseconds
+Time taken           4927 milliseconds
+Connected            100
+Disconnected         0
+Failed               7175
+Total transferred    21.82kB
+Total received       4.97MB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          51      1712        894    1528 3037   
+Latency              0       35          222       1 2191   
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          1528    2411    2546    2587    3000    3014    3035    3037    3037   
+Latency              1       1       1       2       5       61      289     1667    2191   
+
+Received errors:
+
+7175x                not opened
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+
+Online               669 milliseconds
+Time taken           1093 milliseconds
+Connected            150
+Disconnected         0
+Failed               121
+Total transferred    49.3kB
+Total received       158.89kB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          56      303         133     302 527    
+Latency              0       3            15       1 164    
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          302     354     403     437     499     505     517     522     527    
+Latency              1       1       1       1       2       6       26      33      164    
+
+Received errors:
+
+121x                 not opened
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+
+Online               1110 milliseconds
+Time taken           2525 milliseconds
+Connected            200
+Disconnected         0
+Failed               0
+Total transferred    65.82kB
+Total received       92.38kB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          67      418         323     246 952    
+Latency              NaN     NaN         NaN     NaN NaN    
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          246     738     783     809     851     914     941     943     952    
+Latency              NaN     NaN     NaN     NaN     NaN     NaN     NaN     NaN     NaN    
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+                    
+Online               951 milliseconds
+Time taken           3324 milliseconds
+Connected            250
+Disconnected         0
+Failed               131
+Total transferred    82.21kB
+Total received       212kB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          66      398         196     383 777    
+Latency              0       2             6       1 41     
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          383     479     534     566     732     759     774     775     777    
+Latency              1       1       1       1       2       9       30      32      41     
+
+Received errors:
+
+131x                 not opened
+
+Connecting to ws://172.31.14.90:8099/ws/v0/GDAX/select
+              
+Online               1340 milliseconds
+Time taken           2337 milliseconds
+Connected            300
+Disconnected         0
+Failed               0
+Total transferred    98.73kB
+Total received       138.57kB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          85      493         316     388 1158   
+Latency              NaN     NaN         NaN     NaN NaN    
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          388     579     689     777     1026    1103    1136    1146    1158   
+Latency              NaN     NaN     NaN     NaN     NaN     NaN     NaN     NaN     NaN    

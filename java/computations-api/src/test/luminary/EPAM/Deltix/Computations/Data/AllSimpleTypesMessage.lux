@@ -1,0 +1,86 @@
+namespace com.epam.deltix.computations.data;
+
+import EPAM.Deltix.Timebase.Messages.*;
+import EPAM.Deltix.Timebase.Api.Messages.*;
+
+[GenerateReadOnlyInterface][GenerateReadWriteInterface]
+class AllSimpleTypesMessage: InstrumentMessage {
+
+    [SchemaElement()]
+    Boolean BoolField;
+
+    [SchemaElement()]
+    [SchemaType(IsNullable = true)]
+    Boolean? BoolNullableField;
+
+    [SchemaElement()]
+    Data BinaryField;
+
+    [SchemaElement()]
+    Data? BinaryNullableField;
+
+    [SchemaElement()]
+    Int8 ByteField;
+
+    [SchemaElement()]
+    [SchemaType(IsNullable = true)]
+    Int8? ByteNullableField;
+
+    [SchemaElement()]
+    Int16 ShortField;
+
+    [SchemaElement()]
+    [SchemaType(IsNullable = true)]
+    Int16? ShortNullableField;
+
+    [SchemaElement()]
+    Int32 IntField;
+
+    [SchemaElement()]
+    [SchemaType(IsNullable = true)]
+    Int32? IntNullableField;
+
+    [SchemaElement()]
+    Int64 LongField;
+
+    [SchemaElement()]
+    [SchemaType(IsNullable = true)]
+    Int64? LongNullableField;
+
+    [SchemaElement()]
+    Float32 FloatField;
+
+    [SchemaElement()]
+    [SchemaType(IsNullable = true)]
+    Float32? FloatNullableField;
+
+    [SchemaElement()]
+    Float64 DoubleField;
+
+    [SchemaElement()]
+    [SchemaType(IsNullable = true)]
+    Float64? DoubleNullableField;
+
+    [SchemaElement()]
+    Decimal DecimalField;
+
+    [SchemaElement()]
+    [SchemaType(IsNullable = true)]
+    Decimal? DecimalNullableField;
+
+    [SchemaElement()]
+    [SchemaType(DataType = SchemaDataType.VARCHAR, Encoding = "ALPHANUMERIC(10)")]
+    Int64 TextAlphaNumericField;
+
+    [SchemaElement()]
+    [SchemaType(IsNullable = true, DataType = SchemaDataType.VARCHAR, Encoding = "ALPHANUMERIC(10)")]
+    Int64? TextAlphaNumericNullableField;
+
+    [SchemaElement()]
+    Text TextField;
+
+    [SchemaElement()]
+    [SchemaType(IsNullable = true)]
+    Text? TextNullableField;
+
+}

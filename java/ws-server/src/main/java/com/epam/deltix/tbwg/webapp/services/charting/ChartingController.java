@@ -1,0 +1,40 @@
+package com.epam.deltix.tbwg.webapp.services.charting;
+
+import com.epam.deltix.tbwg.webapp.model.charting.ChartType;
+import com.epam.deltix.tbwg.webapp.model.charting.ChartingFrameDef;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v0/charting")
+public class ChartingController {
+
+    private final ChartingService chartingService;
+
+    @Autowired
+    public ChartingController(ChartingService chartingService) {
+        this.chartingService = chartingService;
+    }
+
+    // todo: add endpoint that returns supported data types for stream
+
+    @RequestMapping(value = "/{streamKey}", method = RequestMethod.GET)
+    public List<ChartingFrameDef> getData(@PathVariable String streamKey,
+                                    @RequestParam List<String> symbols,
+                                    @RequestParam(defaultValue = "PRICES_L2") ChartType type,
+                                    @RequestParam Instant startTime,
+                                    @RequestParam Instant endTime,
+                                    @RequestParam(required = false, defaultValue = "100") int maxPoints,
+                                    @RequestParam(required = false, defaultValue = "20") int levels)
+    {
+        if (maxPoints <= 1) {
+            throw new RuntimeException("Illegal maxPoints value: " + maxPoints);
+        }
+
+        return chartingService.getData(streamKey, symbols, type, new TimeInterval(startTime, endTime), maxPoints, levels);
+    }
+
+}

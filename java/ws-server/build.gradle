@@ -1,0 +1,263 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+import deltix.util.io.IOUtil
+
+archivesBaseName = 'deltix-timebase-ws-server'
+
+apply plugin: "com.webcohesion.enunciate"
+
+tasks.enunciate {
+    File outDir = file("${buildDir}/../docs/rest")
+    doFirst {
+        outDir.deleteDir()
+        outDir.mkdirs()
+    }
+    export("docs", outDir)
+}
+
+tasks.enunciate.dependsOn javadoc
+
+task    devguide(type: Zip, dependsOn: enunciate) {
+    archiveFileName = "devguide.zip"
+    destinationDirectory.dir("${rootDir}/docs")
+
+    from ("${buildDir}/docs") {
+        include "*"
+        include "**/*"
+    }
+    from ("${rootDir}/docs") {
+        include '*.html'
+    }
+
+    doLast {
+        println "Created documentation [$archiveName] in [$destinationDir]"
+    }
+}
+
+jar {
+    enabled = true
+    manifest {
+        attributes("Implementation-Title": baseName, "Implementation-Version": version)
+    }
+}
+
+artifacts {
+    archives devguide
+}
+
+javadoc {
+    // skip processing enunciate tags
+    options.tags = [ "responseExample", "pathExample", "label" ]
+}
+
+def bootGroup = 'boot'
+
+task bootJar(type: BootJar, dependsOn: enunciate, group: bootGroup) {
+
+    mainClassName 'deltix.tbwg.webapp.Application'
+
+    manifest {
+        attributes(
+                "Implementation-Title": archivesBaseName,
+                "Implementation-Version": findProperty("version")
+        )
+    }
+
+    classpath {
+        sourceSets.main.runtimeClasspath
+    }
+
+    from("${rootDir}/docs/") {
+        into 'static/api/v0/docs'
+    }
+    from("${buildDir}/docs/rest") {
+        into 'static/api/v0/docs/rest'
+    }
+
+}
+
+configurations.all {
+    resolutionStrategy {
+        // fail eagerly on version conflict (includes transitive dependencies)
+        // e.g. multiple different versions of the same dependency (group and name are equal)
+         failOnVersionConflict()
+    }
+    exclude group: 'ch.qos.logback' // we use GFlogger binding for SL4J instead of logback
+}
+
+task    distribution(type: Zip, dependsOn: bootJar) {
+
+    // [baseName]-[appendix]-[version]-[classifier].[extension]
+    archiveVersion.set("")
+    archiveClassifier.set("distribution")
+
+    destinationDirectory.set(file("${rootDir}/distribution"))
+
+    from ("${buildDir}") {
+        include "docs/*"
+        include "docs/**/*"
+    }
+    from ("${rootDir}") {
+        include 'docs/*.html'
+    }
+
+    from ("${buildDir}/libs") {
+        include "*${project.version}.jar"
+    }
+    from ("${buildDir}/resources/main") {
+        include "*.yaml"
+    }
+
+    doLast {
+        println "Created distribution package [$archiveName] in [$destinationDir]"
+    }
+}
+
+task    pushDistribution(type: Exec, dependsOn: distribution) {
+
+    // without this closure path variable is incorrect!
+    doFirst {
+        def path = distribution.getArchiveFile().get().getAsFile().getAbsolutePath().toString()
+        println "pushing package ${path} under account ${System.getenv('ARTIFACTORY_USER')}"
+
+        commandLine "curl", "--silent", "--show-error", "--fail",
+                "https://artifactory.epam.com/artifactory/EPM-RTC/QuantServer/TBWG/${version}/${distribution.archiveFileName.get()}",
+                "--user", "${System.getenv('ARTIFACTORY_USER')}:${System.getenv('ARTIFACTORY_PASS')}",
+                "--upload-file", "${path}"
+
+        //commandLine "cmd a ${apath}"
+    }
+}
+
+dependencies {
+
+    compile project(":web:frontend")
+    
+    implementation project(":java:ws-messages"),
+            project(":java:grafana-api"),
+            project(":java:grafana-api-impl"),
+            project(":java:grafana-basicmath")
+
+    // Timebase Client
+    api 'deltix.qsrv.timebase:deltix-timebase-client'
+
+    implementation 'deltix.qsrv:deltix-commons-util'
+    implementation 'deltix.qsrv:deltix-commons-messages'
+
+    implementation 'org.asynchttpclient:async-http-client'
+
+    implementation 'org.reflections:reflections'
+
+    compileOnly 'com.google.code.findbugs:jsr305'
+    compileOnly 'com.google.code.findbugs:annotations'
+
+    implementation 'deltix:deltix-containers'
+
+    implementation 'deltix:deltix-gflog-api',
+            'deltix:deltix-gflog-core',
+            'deltix:deltix-gflog-jul',
+            'deltix:deltix-gflog-slf4j'
+
+    implementation ('org.hdrhistogram:HdrHistogram:2.1.10')
+
+    implementation 'com.google.code.gson:gson'
+    implementation 'com.google.guava:guava'
+
+    implementation 'org.springframework.boot:spring-boot-starter',
+            'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-websocket'
+
+    implementation 'org.springframework.security.oauth:spring-security-oauth2',
+            'org.springframework.security:spring-security-config',
+            'org.springframework.security:spring-security-web',
+            'org.springframework.security:spring-security-messaging',
+            'org.springframework.security:spring-security-oauth2-client',
+            'org.springframework.security:spring-security-oauth2-resource-server',
+            'org.springframework.security:spring-security-oauth2-jose',
+            'org.springframework.security:spring-security-jwt'
+
+    implementation 'io.reactivex.rxjava2:rxjava'
+
+    implementation 'deltix:deltix-quoteflow'
+    implementation 'deltix:deltix-containers'
+    implementation 'deltix:rtmath-containers'
+    implementation ('deltix:deltix-timebase-api-rx:6.0.1')
+    implementation ('deltix:transformation-api:0.0.10')
+
+    implementation ('io.reactivex.rxjava2:rxjava:2.1.14')
+
+    implementation 'com.webcohesion.enunciate:enunciate-core-annotations'
+
+    // tests
+    testImplementation 'deltix.qsrv.timebase:deltix-timebase-server'
+    testImplementation 'com.google.code.findbugs:annotations'
+
+    testImplementation "junit:junit",
+            'org.junit.jupiter:junit-jupiter-api'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'commons-io:commons-io'
+
+    testImplementation ('deltix.qsrv.quantserver:deltix-quantserver-pub') {
+        exclude group: 'org.apache.tomcat.embed'
+    }
+
+    testImplementation 'org.glassfish.tyrus:tyrus-client:1.13.1'
+    testImplementation 'org.glassfish.tyrus:tyrus-server:1.13.1'
+    testImplementation 'org.glassfish.tyrus:tyrus-container-grizzly-client:1.13.1'
+    testImplementation 'org.glassfish.tyrus:tyrus-container-grizzly-server:1.13.1'
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+}
+
+ext {
+    dockerImageName = 'timebase/ws-server'
+}
+
+task prepareApplicationYaml() {
+    def var1 = 'RSA_PRIVATE_KEY'
+    def var2 = 'RSA_PUBLIC_KEY'
+
+    Properties props = new Properties()
+    props.put(var1, findProperty(var1) ?: System.getenv(var1) ?: "NO_KEY");
+    props.put(var2, findProperty(var2) ?: System.getenv(var2) ?: "NO_KEY");
+
+    final StringBuilder script = new StringBuilder();
+
+    File file = new File("${rootDir}/java/ws-server/src/main/resources/template.yaml");
+    Reader reader = null;
+    try {
+        reader = new FileReader(file);
+        IOUtil.replaceProperties(reader, (Appendable)script, props);
+    } finally {
+        if (reader != null)
+            reader.close();
+    }
+
+    File out = new File("${rootDir}/java/ws-server/src/main/resources/application.yaml");
+    IOUtil.writeTextFile(out, script.toString());
+}
+
+task prepareFilesForDocker(type: Copy, dependsOn: distribution) {
+    group 'docker'
+    dependsOn ':build'
+
+    def zipFile = file("${rootDir}/distribution/deltix-timebase-ws-server-distribution.zip")
+    def outputDir = file("${buildDir}/docker/ws-server")
+
+    from zipTree(zipFile)
+    into outputDir
+}
+
+task bootRunJar(dependsOn: bootJar, type: JavaExec, group: bootGroup) {
+    jvmArgs = ["-Dfile.encoding=UTF-8"]
+    main="-jar"
+    args = [bootJar.getArchiveFile().get()]
+}
+
+task bootRun(dependsOn: bootJar, type: JavaExec, group: bootGroup) {
+    jvmArgs = ["-Dfile.encoding=UTF-8"]
+    main="-jar"
+    args = [bootJar.getArchiveFile().get()]
+}
+
+build.dependsOn bootJar, prepareApplicationYaml

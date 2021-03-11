@@ -1,0 +1,32 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{title}}</h4>
+  <button (click)="bsModalRef.hide()" tooltip="{{'buttons.close' | translate}}" aria-label="Close" class="close pull-right" type="button">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-md-6">
+      <ng-multiselect-dropdown (onSelect)="globalSettingsFilter()" (onDeSelect)="globalSettingsFilter()"
+        [(ngModel)]="selectedDateFormat" [data]="dropdownListDateFormats" [placeholder]="'Date Format'"
+        [settings]="dropdownSettingsDateFormat">
+      </ng-multiselect-dropdown>
+    </div>
+    <div class="col-md-6">
+      <ng-multiselect-dropdown (onSelect)="globalSettingsFilter()" (onDeSelect)="globalSettingsFilter()"
+        [(ngModel)]="selectedTimeFormat" [data]="dropdownListTimeFormats" [placeholder]="'Time Format'"
+        [settings]="dropdownSettingsTimeFormat">
+      </ng-multiselect-dropdown>
+    </div>
+    <div class="col-md-12">
+        <ng-multiselect-dropdown (onSelect)="globalSettingsFilter()" (onDeSelect)="globalSettingsFilter()"
+          [(ngModel)]="selectedTimeZone" [data]="dropdownListTimeZones" [placeholder]="'Timezone'"
+          [settings]="dropdownSettingsTimeZone">
+        </ng-multiselect-dropdown>
+      </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button (click)="clear()" tooltip="{{'buttons.clear' | translate}}" class="btn btn-default" type="button">Clear</button>
+  <button (click)="bsModalRef.hide()" tooltip="{{'buttons.close' | translate}}" class="btn btn-default last" type="button">{{closeBtnName}}</button>
+</div>
